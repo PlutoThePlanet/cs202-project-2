@@ -1,0 +1,261 @@
+= Programming Assignment 2:  Spring 2021
+:toc:
+
+ifdef::env-github,env-browser[]
+:toc: preamble
+:toclevels: 2
+endif::[]
+ifdef::env-github[]
+:status:
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+
+
+
+== Project Goals
+
+The goal of this project is to:
+
+. Continue the use of *makefiles*.
+. Provide practice with new *class* building skills.
+. Learn how the `vector` class can be used in place of arrays.
+. Learn to use exceptions to handle runtime errors.
+
+=== Important Notes
+
+. *Formatting*: Make sure that you follow the precise recommendations for the output content and formatting.
+For example, do not change the text from “Correct usage: ” to “correct”.
+. *Comments*: Header comments are required on all files and recommended
+for the rest of the program. Points will be deducted if no header comments are included.
+
+
+== Programming Problem
+
+In this exercise, you will write a program that loads information about dogs from a text file and displays the data to the user in a formatted table. The name of the text file
+should be provided as a command line argument. Error messages should be displayed if the file name is missing on the command line, if the file is not found, or if the file is not formatted correctly for input.
+
+.Sample Output
+[listing]
+....
+➜ ./pet_manager
+Correct usage:
+./pet_manager filename
+
+➜  ./pet_manager notafilerealfile
+File notafilerealfile could not be opened
+
+➜  ./pet_manager baddogs.txt
+The data file is not formatted correctly
+
+➜  ./pet_manager dogs.txt
+Name    Age     Breed
+======================
+Rover   10      baddog
+Tim     12      Terrier
+Grogu   50      Jeddi
+The oldest dog is 50 years old.
+Its name is Grogu
+....
+
+
+== Required Files and Classes
+The following files are required for the project:
+
+* driver.cpp
+* Class: `Dog`
+** dog.h
+** dog.cpp
+* Class: `DogManager`
+** dogmanager.h
+** dogmanager.cpp
+* Class: `DogTablePrinter`
+** dogtableprinter.h
+** dogtableprinter.cpp
+* makefile
+
+
+
+====
+
+*File:* `driver.cpp`
+The important concepts in this project are in the `Dog` and `DogManager` classes. The `driver.cpp` file has therefore been supplied to you to provide guidance in using the classes. The `main` function shows how the other classes are to be used.
+
+[WARNING]
+--
+You must use this file as-is. Modifications are not allowed.
+--
+
+====
+[IMPORTANT]
+--
+You will need to provide default and copy constructors for both the `Dog` and `DogManager` classes in addition to the parameterized constructors outlined below.
+--
+====
+*Class*: `DogManager`
+
+.Files
+`dogmanager.h`, `dogmanager.cpp`
+
+.Overview
+These files should implement the `DogManager` class. The class is responsible for loading and maintaining dog data. The implementation of functions for the class must be in the `cpp` file, not the `h` file.
+
+.Attributes
+The following are the required private attributes of the `DogManager` class:
+[source, c++]
+--
+vector<Dog> dogList; // holds dogs loaded from file
+--
+.Functions
+The following are the required functions for the class. You may add other _private_ functions as needed. The public interface should not change.
+
+=====
+.Getters and Setters
+This is a case where you _do not_ create getters and setters. The `dogList` should only be manipulated internally. The class can optionally pass it to other classes as needed (in this case, the `DogTablePrinter` class).
+=====
+=====
+.Function: `+DogManager dm(string filename)+` (parameterized constructor)
+
+_Input_: the name of the file containing the dog information
+
+_Output_: instance of `DogManager` class
+
+This constructor should call the private function `loadDogs` (see below).
+
+=====
+
+
+
+=====
+.Function: `+loadDogs(string filename)+`
+_Access level_: public
+
+_Input_: the name of the file containing the dog information
+
+_Returns_: instance of `DogManager` class
+
+The pseudo-code below shows the expected flow for this function:
+....
+open file
+for each line in the file
+    read the line
+    create a dog object and add it to the vector of dog objects
+....
+
+_Exceptions_: This function must throw an exception if the file supplied cannot be opened. The message should read "File <filename> could not be opened", where *<filename>* is the name of the file that was supplied on the command line.
+
+_Technical requirements_: This function populates the private attribute `vector<Dog> dogList`
+
+=====
+
+=====
+.Function `+oldestDog()+`
+
+_Access level_: public
+
+_Input_: None
+
+_Returns_: the `Dog` object that has the highest `age` of those currently loaded
+=====
+
+
+=====
+.Function `printDogTable()`
+_Access level_: public
+
+_Input_: None
+
+_Returns_: None
+
+_Output_: Prints a table to the console.
+
+This function delegates printing to the `DogTablePrinter` class by calling `printDogTable`. See the class description below.
+=====
+====
+====
+*Class*: `DogTablePrinter`
+
+.Files
+`dogtableprinter.h`, `dogtableprinter.cpp`
+
+.Overview
+This class encapsulates the printing of the table. Note that this class _has no attributes_, so that it could be designed to have only static functions. This will be discussed later in the semester.
+
+.Attributes
+See above.
+
+.Functions
+Only one public function is required. You may use private functions as needed.
+=====
+.Function `printDogTable()`
+
+_Access level_: public
+
+_Input_: `vector<Dog>` containing all the dogs that have been loaded in the system
+
+_Return_: none
+
+_Output_: prints table of dogs. See the example output above for the required output format
+=====
+====
+====
+*Class*: `Dog`
+
+.Files
+`dog.h`, `dog.cpp`
+
+.Overview
+These files should implement the `Dog` class. The class is responsible for holding all attributes of a dog. The implementation of functions for the class must be in the `cpp` file, not the `h` file.
+
+.Attributes
+The following are the required private attributes of the `Dog` class:
+[source, c++]
+--
+string name;  // name of the dog
+int age;      // its age in years
+string breed; // the dog breed (Terrier, Bloodhound, etc.
+--
+.Functions
+The following are the required functions for the class. You may add other _private_ functions as needed. The public interface should not change.
+=====
+.Getters and Setters
+
+Create getters and setters for all class attributes.
+=====
+=====
+.Function `Dog(string name, int age,string breed)`
+
+_Access level_: public
+
+_Input_: dog name, age, and breed
+
+_Return_: instance of `Dog` object (*this is constructor, so no explicit return!*)
+
+=====
+
+====
+
+
+
+## Submission details
+To submit your project, you will have to use git on your VirtualBox installation:
+
+. After accepting the assignment invitation, copy the clone URL
+. cd into your new assignment directory
+. After working on your files , when you’re ready, type the following commands:
+--
+    git add .
+    git commit -m "<commit message here...>"
+    git push origin master
+--
+
+[IMPORTANT]
+--
+Copy the clone URL from your Github repository and turn it in on Webcampus in the programming assignment
+--
